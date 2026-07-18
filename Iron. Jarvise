@@ -1,0 +1,49 @@
+import speech_recognition as sr
+import pyttsx3
+import webbrowser
+import datetime
+import wikipedia
+
+engine = pyttsx3.init()
+
+def speak(text):
+    print("Jarvis:", text)
+    engine.say(text)
+    engine.runAndWait()
+
+def take_command():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source)
+
+    try:
+        command = r.recognize_google(audio).lower()
+        print("You:", command)
+        return command
+    except:
+        return ""
+
+speak("Hello, I am Jarvis. How can I help you?")
+
+while True:
+    command = take_command()
+
+    if "time" in command:
+        speak(datetime.datetime.now().strftime("%I:%M %p"))
+
+    elif "youtube" in command:
+        webbrowser.open("https://www.youtube.com")
+
+    elif "google" in command:
+        webbrowser.open("https://www.google.com")
+
+    elif "wikipedia" in command:
+        topic = command.replace("wikipedia", "")
+        result = wikipedia.summary(topic, sentences=2)
+        speak(result)
+
+    elif "exit" in command or "stop" in command:
+        speak("Goodbye!")
+        break
